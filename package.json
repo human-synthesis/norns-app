@@ -5,20 +5,22 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "NODE_OPTIONS='--preserve-symlinks' vite dev",
-    "build": "NODE_OPTIONS='--preserve-symlinks' vite build",
-    "preview": "vite preview",
-    "check": "svelte-check --tsconfig ./jsconfig.json"
+    "dev": "NODE_OPTIONS='--preserve-symlinks' norns dev",
+    "build": "NODE_OPTIONS='--preserve-symlinks' norns build",
+    "preview": "norns preview",
+    "check": "svelte-check --tsconfig ./jsconfig.json",
+    "compare": "bun scripts/compare-examples.js"
   },
   "devDependencies": {
-    "@human-synthesis/norns": "^0.0.2",
-    "@human-synthesis/norns-core": "^0.0.2",
+    "@human-synthesis/norns": "^0.0.5",
+    "@human-synthesis/norns-core": "^0.0.5",
     "@sveltejs/adapter-auto": "^3.3.1",
     "@sveltejs/kit": "^2.59.1",
     "@sveltejs/vite-plugin-svelte": "^4",
+    "@tailwindcss/vite": "^4",
     "svelte": "^5.55.5",
     "svelte-check": "^4.0.0",
-    "unocss": "^0.65.0",
+    "tailwindcss": "^4",
     "vite": "^5.4.0"
   },
   "packageManager": "bun@1.2.16"

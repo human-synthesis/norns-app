@@ -1,10 +1,8 @@
 import adapter from '@sveltejs/adapter-auto';
-import { nornsPreprocess } from '@human-synthesis/norns-core/preprocess';
+import { nornsConfig } from '@human-synthesis/norns/config';
 
-export default {
-	preprocess: nornsPreprocess(),
+export default nornsConfig({
 	kit: {
-		adapter: adapter(),
-		moduleExtensions: ['.js', '.ts', '.coffee']
+		adapter: adapter()
 	}
-};
+});

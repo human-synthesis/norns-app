@@ -1,0 +1,36 @@
+@reference 'tailwindcss';
+
+/*
+ * Todo-feature styles. Self-contained — no dependencies on app.css.
+ */
+
+.todo-input {
+	@apply flex-1 px-4 py-2.5 bg-white border border-neutral-200 rounded-lg text-neutral-900 transition-all duration-200;
+	@apply focus:outline-none focus:border-violet-400 focus:ring-4 focus:ring-violet-100;
+	@apply placeholder:text-neutral-400;
+}
+
+.todo-add {
+	@apply px-5 py-2.5 rounded-lg font-medium text-white shadow-sm transition-all duration-200;
+	background: linear-gradient(135deg, oklch(0.5 0.22 285), oklch(0.45 0.2 240));
+	@apply hover:shadow-md hover:-translate-y-0.5;
+	@apply disabled:opacity-40 disabled:cursor-not-allowed disabled:translate-y-0 disabled:shadow-none;
+}
+
+.todo-remove {
+	@apply text-neutral-300 hover:text-red-500 text-2xl leading-none transition-colors duration-200;
+	@apply cursor-pointer bg-transparent border-0 px-2 py-0;
+}
+
+.todo-empty {
+	@apply text-neutral-400 text-center py-16 px-6 bg-white/40 border border-dashed border-neutral-300 rounded-xl;
+}
+
+.todo-summary {
+	@apply flex justify-between items-center text-sm text-neutral-500 pt-4 mt-3 border-t border-neutral-200/80;
+}
+
+.todo-clear {
+	@apply text-neutral-500 hover:text-red-500 hover:underline transition-colors duration-200;
+	@apply cursor-pointer bg-transparent border-0 p-0 text-sm font-medium;
+}
