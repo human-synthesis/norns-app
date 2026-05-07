@@ -1,0 +1,25 @@
+{
+  "name": "norns-app",
+  "version": "0.0.1",
+  "description": "Starter template for Norns apps",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "NODE_OPTIONS='--preserve-symlinks' vite dev",
+    "build": "NODE_OPTIONS='--preserve-symlinks' vite build",
+    "preview": "vite preview",
+    "check": "svelte-check --tsconfig ./jsconfig.json"
+  },
+  "devDependencies": {
+    "@human-synthesis/norns": "workspace:*",
+    "@human-synthesis/norns-core": "workspace:*",
+    "@sveltejs/adapter-auto": "^3.3.1",
+    "@sveltejs/kit": "^2.59.1",
+    "@sveltejs/vite-plugin-svelte": "^4.0.0",
+    "svelte": "^5.55.5",
+    "svelte-check": "^4.0.0",
+    "unocss": "^0.65.0",
+    "vite": "^5.4.0"
+  },
+  "packageManager": "bun@1.2.16"
+}
