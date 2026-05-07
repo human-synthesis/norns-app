@@ -11,8 +11,8 @@
     "check": "svelte-check --tsconfig ./jsconfig.json"
   },
   "devDependencies": {
-    "@human-synthesis/norns": "workspace:*",
-    "@human-synthesis/norns-core": "workspace:*",
+    "@human-synthesis/norns": "^0.0.1",
+    "@human-synthesis/norns-core": "^0.0.1",
     "@sveltejs/adapter-auto": "^3.3.1",
     "@sveltejs/kit": "^2.59.1",
     "@sveltejs/vite-plugin-svelte": "^4.0.0",
