@@ -1,4 +1,5 @@
 @import 'tailwindcss';
+@import '@human-synthesis/norns-ui/styles';
 
 /*
  * App-wide styles.

@@ -14,7 +14,7 @@ section.animate-in-delayed.pt-8.space-y-6
 		input.note-title-input(name="title" placeholder="title…" value!="{form?.title ?? ''}" required)
 		textarea.note-body-input(name="body" placeholder="body (optional)…" rows="3")
 			| {form?.body ?? ''}
-		button.note-submit(type="submit") Create note
+		Btn(type="submit" variant="primary") Create note
 		+if('form?.error')
 			p.note-error {form.error}
 
