@@ -1,8 +1,3 @@
-import { error, redirect } from '@sveltejs/kit'
-import { page } from '@human-synthesis/norns/server'
-import { notes } from '$lib/norns/notes/server/public'
-import { updateNoteSchema } from '$lib/norns/notes/shared/schema'
-
 export load := page.load
 	handler: ({ container, params }) =>
 		id := Number params.id

@@ -6,6 +6,3 @@
 		.inline-flex.items-center.gap-2.text-xs.text-neutral-400.font-mono
 			span.w-2.h-2.rounded-full(class="bg-violet-400 animate-pulse")
 			| v0.0.5 · early access
-
-<script>
-	import Header from '$lib/components/Header'

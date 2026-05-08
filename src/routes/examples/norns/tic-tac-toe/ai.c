@@ -1,6 +1,3 @@
-import { get } from 'svelte/store'
-import { board, turn, mode, result, play } from 'store'
-
 LINES := [
 	[0, 1, 2], [3, 4, 5], [6, 7, 8]
 	[0, 3, 6], [1, 4, 7], [2, 5, 8]

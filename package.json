@@ -14,8 +14,8 @@
     "migrate": "norns migrate"
   },
   "devDependencies": {
-    "@human-synthesis/norns": "^0.0.6",
-    "@human-synthesis/norns-core": "^0.0.6",
+    "@human-synthesis/norns": "^0.0.7",
+    "@human-synthesis/norns-core": "^0.0.7",
     "@sveltejs/adapter-auto": "^3.3.1",
     "@sveltejs/kit": "^2.59.1",
     "@sveltejs/vite-plugin-svelte": "^4",

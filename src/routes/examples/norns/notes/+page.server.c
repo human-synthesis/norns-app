@@ -1,8 +1,3 @@
-import { redirect } from '@sveltejs/kit'
-import { page } from '@human-synthesis/norns/server'
-import { notes } from '$lib/norns/notes/server/public'
-import { createNoteSchema } from '$lib/norns/notes/shared/schema'
-
 export load := page.load
 	handler: ({ container }) =>
 		notes: notes(container).list()

@@ -1,7 +1,16 @@
 import adapter from '@sveltejs/adapter-auto';
+import { nornsAutoImport } from '@human-synthesis/norns/auto-import';
 import { nornsConfig } from '@human-synthesis/norns/config';
+import { nornsPreprocess } from '@human-synthesis/norns/preprocess';
 
 export default nornsConfig({
+	preprocess: [
+		...nornsPreprocess(),
+		nornsAutoImport({
+			componentDirs: ['src/lib/components', 'src/routes'],
+			exportDirs: ['src/lib', 'src/routes']
+		})
+	],
 	kit: {
 		adapter: adapter()
 	}

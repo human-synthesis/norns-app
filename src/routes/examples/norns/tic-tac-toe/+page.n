@@ -12,4 +12,3 @@ section.animate-in-delayed.pt-10
 
 <script>
 	import './tic-tac-toe.css'
-	import Game from 'Game'

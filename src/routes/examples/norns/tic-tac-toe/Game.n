@@ -39,10 +39,6 @@
 		button.tt-reset(onclick!="{handleReset}") Reset
 
 <script>
-	import Board from 'Board'
-	import { board, mode, turn, result, stats, play, reset, setMode, incrementStats } from 'store'
-	import { scheduleAiMove } from 'ai'
-
 	notified .= $state false
 
 	$effect =>

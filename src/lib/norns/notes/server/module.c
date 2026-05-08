@@ -2,9 +2,6 @@ import Database from 'better-sqlite3'
 import { mkdirSync } from 'node:fs'
 import { dirname } from 'node:path'
 
-import { NotesRepo } from './repo'
-import { NotesService } from './service'
-
 import type { Container } from '@human-synthesis/norns/server'
 
 DB_PATH := 'data/notes.db'
