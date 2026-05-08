@@ -1,5 +1,5 @@
 header.glass-header
-	.w-full.max-w-3xl.mx-auto.px-6.py-4.flex.items-center.justify-between.sm:px-8.lg:px-10
+	.w-full.max-w-3xl.mx-auto.px-6.py-6.flex.items-center.justify-between.sm:px-8.lg:px-10
 		a.flex.items-center.gap-3.no-underline.text-neutral-900.transition-opacity.hover:opacity-80(href="/")
 			.logo-mark N
 			span.font-extrabold.tracking-tight.text-lg Norns
