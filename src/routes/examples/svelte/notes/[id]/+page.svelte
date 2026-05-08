@@ -3,6 +3,15 @@
 	import type { PageProps } from './$types';
 
 	let { data, form }: PageProps = $props();
+
+	const errors = $derived.by(() => {
+		const out: Record<string, string> = {};
+		for (const issue of form?.errors ?? []) {
+			const name = issue.path?.[0]?.key as string | undefined;
+			if (name && !out[name]) out[name] = issue.message;
+		}
+		return out;
+	});
 </script>
 
 <section class="animate-in space-y-3">
@@ -11,22 +20,38 @@
 	<p class="text-sm text-neutral-500">updated {new Date(data.note.updated_at).toLocaleString()}</p>
 </section>
 
-<section class="animate-in-delayed pt-8 space-y-4">
-	<form class="note-form" method="POST" action="?/update">
-		<input class="note-title-input" name="title" value={data.note.title} required />
-		<textarea class="note-body-input" name="body" rows="6">{data.note.body}</textarea>
-		<div class="flex items-center gap-3">
-			<button class="note-submit" type="submit">Save</button>
-			{#if form?.saved}
-				<span class="note-saved">saved</span>
+<section class="animate-in-delayed pt-8 space-y-6">
+	<form class="form" method="POST" action="?/update">
+		<div class="field">
+			<label class="field-label" for="title">Title <span class="field-required">*</span></label>
+			<input
+				class="input {errors.title ? 'input-err' : ''}"
+				id="title"
+				name="title"
+				value={data.note.title}
+				required
+				aria-invalid={errors.title ? 'true' : undefined}
+				aria-describedby={errors.title ? 'title-error' : undefined}
+			/>
+			{#if errors.title}
+				<p class="field-error" role="alert" id="title-error">{errors.title}</p>
 			{/if}
-			{#if form?.error}
-				<span class="text-sm text-red-600">{form.error}</span>
+		</div>
+
+		<div class="field">
+			<label class="field-label" for="body">Body</label>
+			<textarea class="textarea" id="body" name="body" rows="6">{data.note.body}</textarea>
+		</div>
+
+		<div class="flex items-center gap-3">
+			<button class="btn btn-primary" type="submit">Save</button>
+			{#if form?.saved}
+				<span class="text-sm text-green-600">saved</span>
 			{/if}
 		</div>
 	</form>
 
 	<form method="POST" action="?/delete">
-		<button class="note-delete" type="submit">Delete note</button>
+		<button class="btn btn-danger" type="submit">Delete note</button>
 	</form>
 </section>

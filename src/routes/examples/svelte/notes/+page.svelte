@@ -3,6 +3,15 @@
 	import type { PageProps } from './$types';
 
 	let { data, form }: PageProps = $props();
+
+	const errors = $derived.by(() => {
+		const out: Record<string, string> = {};
+		for (const issue of form?.errors ?? []) {
+			const name = issue.path?.[0]?.key as string | undefined;
+			if (name && !out[name]) out[name] = issue.message;
+		}
+		return out;
+	});
 </script>
 
 <section class="animate-in space-y-3">
@@ -16,13 +25,36 @@
 </section>
 
 <section class="animate-in-delayed pt-8 space-y-6">
-	<form class="note-form" method="POST" action="?/create">
-		<input class="note-title-input" name="title" placeholder="title…" value={form?.title ?? ''} required />
-		<textarea class="note-body-input" name="body" placeholder="body (optional)…" rows="3">{form?.body ?? ''}</textarea>
-		<button class="note-submit" type="submit">Create note</button>
-		{#if form?.error}
-			<p class="note-error">{form.error}</p>
-		{/if}
+	<form class="form" method="POST" action="?/create">
+		<div class="field">
+			<label class="field-label" for="title">Title <span class="field-required">*</span></label>
+			<input
+				class="input {errors.title ? 'input-err' : ''}"
+				id="title"
+				name="title"
+				placeholder="title…"
+				value={form?.values?.title ?? ''}
+				required
+				aria-invalid={errors.title ? 'true' : undefined}
+				aria-describedby={errors.title ? 'title-error' : undefined}
+			/>
+			{#if errors.title}
+				<p class="field-error" role="alert" id="title-error">{errors.title}</p>
+			{/if}
+		</div>
+
+		<div class="field">
+			<label class="field-label" for="body">Body</label>
+			<textarea
+				class="textarea"
+				id="body"
+				name="body"
+				placeholder="body (optional)…"
+				rows="3">{form?.values?.body ?? ''}</textarea>
+			<p class="field-help">Optional</p>
+		</div>
+
+		<button class="btn btn-primary" type="submit">Create note</button>
 	</form>
 
 	{#if data.notes.length === 0}
