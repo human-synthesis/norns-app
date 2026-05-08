@@ -1,6 +1,8 @@
 # norns-app
 
-**AI-driven software architecture and development framework, based on Svelte — starter template.**
+**Starter template for Norns apps.**
+
+A single page that exercises the full Norns runtime — feature-folder modularity, DI, valibot validation, server actions, Pug + Civet — in roughly 60 LOC of code you can read in one sitting and rewrite in two.
 
 ## Stack
 
@@ -12,8 +14,8 @@
 - [Vite](https://vitejs.dev) — bundler
 - [bun](https://bun.sh) — runtime / package manager
 - [`@human-synthesis/norns`](https://github.com/human-synthesis/norns) + [`norns-core`](https://github.com/human-synthesis/norns-core) — the framework
+- [`@human-synthesis/norns-ui`](https://github.com/human-synthesis/norns-ui) — UI components
 - [valibot](https://valibot.dev) — input validation
-- [better-sqlite3](https://github.com/WiseLibs/better-sqlite3) — local SQLite
 
 ## Setup
 
@@ -21,7 +23,6 @@
 bun create human-synthesis/norns-app my-app
 cd my-app
 bun install
-bun run migrate up   # apply migrations to data/notes.db (or whatever DATABASE_URL points to)
 ```
 
 ## Run
@@ -30,54 +31,44 @@ bun run migrate up   # apply migrations to data/notes.db (or whatever DATABASE_U
 bun run dev          # dev server at http://localhost:5173
 bun run build        # production build
 bun run preview      # preview production build
-
-bun run migrate up        # apply pending migrations
-bun run migrate status    # list applied + pending
-bun run migrate create <feature>/<name>   # scaffold a new migration
-
-bun run check:arch   # verify feature-folder boundaries (no internals leaks)
-bun run compare      # side-by-side LOC/char comparison: norns vs vanilla SvelteKit
 ```
 
 ## What's in here
 
 ```
 src/
-  hooks.server.c                    # boots the norns runtime
-  +layout.c, +layout.n              # app shell
+  hooks.server.c                # boots the norns runtime, eager-loads feature modules
+  app.css, app.html             # global styles + html shell
   routes/
-    +page.n                         # home
-    examples/
-      +page.n
-      norns/                        # ← Norns version of the examples
-        +page.n
-        notes/                      # SQLite + form actions + DI + valibot
-          +page.n / +page.server.c
-          [id]/+page.n, +page.server.c, +error.n
-        tic-tac-toe/                # components + Svelte stores + AI heuristic
-          +page.n, Game.n, Board.n, Cell.n, store.c, ai.c
-      svelte/                       # ← Vanilla SvelteKit version of the same examples
-        notes/, tic-tac-toe/
+    +layout.c, +layout.n        # app shell with the <Header>
+    +page.n                     # one-page demo: form + list of messages
+    +page.server.c              # load() + send action wired to the messages feature
   lib/
-    components/Header.n
-    norns/                          # framework-managed feature folders
-      notes/
+    components/Header.n         # site nav
+    norns/
+      messages/                 # one feature folder, in-memory store
         server/{module,repo,service,public}.c
-        shared/schema.c
-    svelte/                         # vanilla version of the data layer
-      notes/{db,repo,service,schema}.ts
-migrations/
-  notes/                            # SQL migrations, applied via `bun run migrate up`
 ```
 
-## Two side-by-side examples
+## The starter feature
 
-The `examples/` folder is intentionally minimal — two apps written twice:
+`src/lib/norns/messages/` is a complete Norns feature folder, in miniature:
 
-- **Notes** — SQLite, dynamic routes, form actions, valibot validation, error pages, SSR `load`. Norns side uses the runtime's DI container, public.c boundary, and route/page wrappers; vanilla side uses direct module imports and ad-hoc validation.
-- **Tic-tac-toe** — multi-component composition, `$props` with defaults, Svelte stores (`writable` / `derived`), `$state`/`$effect` runes, scoped CSS, AI heuristic.
+- **`repo.c`** — in-memory `list` / `add` / `clear`. Replace with Drizzle, better-sqlite3, D1, or anything else when you need persistence.
+- **`service.c`** — valibot schema + `create` / `list` business logic. Errors flow back through `fail(400, { errors })` and end up rendered by `<Form form={form}> + <Field name="text">`.
+- **`module.c`** — DI registrations. The only file `boot()` reaches; everything else stays private to the feature.
+- **`public.c`** — `import { messages }` from this is how routes / other features call into the service.
 
-Run `bun run compare` for the line/char delta.
+To see how it's wired:
+
+- `src/routes/+page.server.c` calls `messages().create({ text })` and `messages().list()`.
+- `src/routes/+page.n` renders `<Form>` from `@human-synthesis/norns-ui`. Field-level errors arrive via `form?.errors` and the Form-context error map; no per-page boilerplate.
+
+## Going further
+
+Delete `src/lib/norns/messages/` and `src/routes/+page.*` and rewrite. Or copy the feature folder for each new domain you add — that's the whole pattern.
+
+Examples + a side-by-side LOC comparison vs vanilla SvelteKit live in [norns-demo](https://github.com/human-synthesis/norns-demo).
 
 ## License
 

@@ -8,10 +8,7 @@
     "dev": "NODE_OPTIONS='--preserve-symlinks' norns dev",
     "build": "NODE_OPTIONS='--preserve-symlinks' norns build",
     "preview": "norns preview",
-    "check": "svelte-check --tsconfig ./jsconfig.json",
-    "check:arch": "bun scripts/check-arch.js",
-    "compare": "bun scripts/compare-examples.js",
-    "migrate": "norns migrate"
+    "check": "svelte-check --tsconfig ./jsconfig.json"
   },
   "devDependencies": {
     "@human-synthesis/norns": "^0.0.7",
@@ -28,8 +25,6 @@
   },
   "packageManager": "bun@1.2.16",
   "dependencies": {
-    "better-sqlite3": "^12.9.0",
-    "lodash": "^4.18.1",
     "valibot": "^1.4.0"
   }
 }
