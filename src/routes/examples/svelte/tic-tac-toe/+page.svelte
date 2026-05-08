@@ -1,6 +1,6 @@
 <script lang="ts">
 	import './tic-tac-toe.css';
-	import Game from 'Game';
+	import Game from './Game.svelte';
 </script>
 
 <section class="animate-in space-y-3">

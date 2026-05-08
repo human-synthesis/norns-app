@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { toggleTodo, removeTodo, type Todo } from 'store';
+	import { toggleTodo, removeTodo, type Todo } from './store';
 
 	let { todo }: { todo: Todo } = $props();
 </script>

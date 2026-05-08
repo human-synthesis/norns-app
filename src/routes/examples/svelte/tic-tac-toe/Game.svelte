@@ -1,5 +1,5 @@
 <script lang="ts">
-	import Board from 'Board';
+	import Board from './Board.svelte';
 	import {
 		board,
 		mode,
@@ -11,8 +11,8 @@
 		setMode,
 		incrementStats,
 		type Mode
-	} from 'store';
-	import { scheduleAiMove } from 'ai';
+	} from './store';
+	import { scheduleAiMove } from './ai';
 
 	let notified = $state(false);
 

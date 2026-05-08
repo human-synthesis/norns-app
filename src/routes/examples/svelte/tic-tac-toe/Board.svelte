@@ -1,6 +1,6 @@
 <script lang="ts">
-	import Cell from 'Cell';
-	import type { Cell as CellType } from 'store';
+	import Cell from './Cell.svelte';
+	import type { Cell as CellType } from './store';
 
 	let {
 		cells,

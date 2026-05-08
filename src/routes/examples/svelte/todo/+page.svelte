@@ -1,5 +1,5 @@
 <script lang="ts">
-	import TodoList from 'TodoList';
+	import TodoList from './TodoList.svelte';
 </script>
 
 <section class="animate-in space-y-3">

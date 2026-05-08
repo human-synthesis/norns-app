@@ -1,8 +1,8 @@
 <script lang="ts">
 	import './todo.css';
-	import TodoInput from 'TodoInput';
-	import TodoItem from 'TodoItem';
-	import { todos, total, remaining, clearCompleted } from 'store';
+	import TodoInput from './TodoInput.svelte';
+	import TodoItem from './TodoItem.svelte';
+	import { todos, total, remaining, clearCompleted } from './store';
 </script>
 
 <div class="space-y-4">

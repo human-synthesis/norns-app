@@ -31,5 +31,12 @@
 			</div>
 			<p class="text-sm text-neutral-600 leading-relaxed">JSON endpoint with GET / POST, table view, debounced search</p>
 		</a>
+		<a class="card-interactive" href="/examples/svelte/notes">
+			<div class="flex items-start justify-between gap-3 mb-2">
+				<h2 class="font-semibold text-lg">Notes</h2>
+				<span class="text-xs text-neutral-400 font-mono shrink-0 mt-1">.svelte</span>
+			</div>
+			<p class="text-sm text-neutral-600 leading-relaxed">SQLite + form actions, dynamic routes, +error.svelte, SSR load</p>
+		</a>
 	</div>
 </section>

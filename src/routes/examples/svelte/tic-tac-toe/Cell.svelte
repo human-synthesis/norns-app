@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { Cell } from 'store';
+	import type { Cell } from './store';
 
 	let {
 		value,

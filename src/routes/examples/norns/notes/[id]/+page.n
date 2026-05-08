@@ -1,0 +1,24 @@
+section.animate-in.space-y-3
+	a.text-sm.nav-link.inline-flex.items-center.gap-1(href="/examples/norns/notes") ← all notes
+	h1.text-3xl.font-bold.tracking-tight.leading-none {data.note.title}
+	p.text-sm.text-neutral-500
+		| updated {new Date(data.note.updated_at).toLocaleString()}
+
+section.animate-in-delayed.pt-8.space-y-4
+	form.note-form(method="POST" action="?/update")
+		input.note-title-input(name="title" value!="{data.note.title}" required)
+		textarea.note-body-input(name="body" rows="6")
+			| {data.note.body}
+		.flex.items-center.gap-3
+			button.note-submit(type="submit") Save
+			+if('form?.saved')
+				span.note-saved saved
+			+if('form?.error')
+				span.text-sm.text-red-600 {form.error}
+
+	form(method="POST" action="?/delete")
+		button.note-delete(type="submit") Delete note
+
+<script>
+	import './../notes.css'
+	{ data, form } = $props()

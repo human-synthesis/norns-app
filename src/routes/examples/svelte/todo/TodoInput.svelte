@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { addTodo } from 'store';
+	import { addTodo } from './store';
 
 	let value = $state('');
 
