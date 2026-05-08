@@ -4,6 +4,8 @@
 
 	let { data, form }: PageProps = $props();
 
+	let deleteOpen = $state(false);
+
 	const errors = $derived.by(() => {
 		const out: Record<string, string> = {};
 		for (const issue of form?.errors ?? []) {
@@ -51,7 +53,26 @@
 		</div>
 	</form>
 
-	<form method="POST" action="?/delete">
-		<button class="btn btn-danger" type="submit">Delete note</button>
-	</form>
+	<button class="btn btn-danger" type="button" onclick={() => (deleteOpen = true)}>Delete note</button>
+
+	{#if deleteOpen}
+		<div class="dialog-overlay" data-state="open" onclick={() => (deleteOpen = false)}></div>
+		<div
+			class="dialog-content"
+			data-state="open"
+			role="dialog"
+			aria-modal="true"
+			aria-labelledby="del-title"
+			aria-describedby="del-desc"
+		>
+			<h2 class="dialog-title" id="del-title">Delete this note?</h2>
+			<p class="dialog-description" id="del-desc">This cannot be undone.</p>
+			<div class="dialog-actions">
+				<button class="btn btn-ghost" type="button" onclick={() => (deleteOpen = false)}>Cancel</button>
+				<form method="POST" action="?/delete" style="display:inline">
+					<button class="btn btn-danger" type="submit">Delete</button>
+				</form>
+			</div>
+		</div>
+	{/if}
 </section>

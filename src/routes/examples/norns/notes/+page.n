@@ -10,10 +10,10 @@ section.animate-in.space-y-3
 		| — no client-side fetch.
 
 section.animate-in-delayed.pt-8.space-y-6
-	Form(action="?/create")
-		Field(label="Title" required error!="{errors.title}")
+	Form(action="?/create" form!="{form}")
+		Field(label="Title" name="title" required)
 			Input(name="title" placeholder="title…" value!="{form?.values?.title ?? ''}" required)
-		Field(label="Body" help="Optional")
+		Field(label="Body" name="body" help="Optional")
 			Textarea(name="body" placeholder="body (optional)…" rows="3" value!="{form?.values?.body ?? ''}")
 		Btn(type="submit" variant="primary") Create note
 
@@ -33,14 +33,3 @@ section.animate-in-delayed.pt-8.space-y-6
 	import './notes.css'
 
 	{ data, form } := $props()
-
-	// Map the valibot issue list returned by page.actions on validation failure
-	// into a `{ <field-name>: <message> }` shape for Field's `error` prop.
-	errors := $derived.by =>
-		out := {}
-		if form?.errors
-			for issue of form.errors
-				name := issue.path?.[0]?.key
-				if name && !out[name]
-					out[name] = issue.message
-		out
