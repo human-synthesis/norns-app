@@ -4,21 +4,30 @@ section.animate-in.space-y-3
 	p.text-sm.text-neutral-500
 		| updated {new Date(data.note.updated_at).toLocaleString()}
 
-section.animate-in-delayed.pt-8.space-y-4
-	form.note-form(method="POST" action="?/update")
-		input.note-title-input(name="title" value!="{data.note.title}" required)
-		textarea.note-body-input(name="body" rows="6")
-			| {data.note.body}
+section.animate-in-delayed.pt-8.space-y-6
+	Form(action="?/update")
+		Field(label="Title" required error!="{errors.title}")
+			Input(name="title" value!="{data.note.title}" required)
+		Field(label="Body")
+			Textarea(name="body" rows="6" value!="{data.note.body}")
 		.flex.items-center.gap-3
-			button.note-submit(type="submit") Save
+			Btn(type="submit" variant="primary") Save
 			+if('form?.saved')
-				span.note-saved saved
-			+if('form?.error')
-				span.text-sm.text-red-600 {form.error}
+				span.text-sm.text-green-600 saved
 
-	form(method="POST" action="?/delete")
-		button.note-delete(type="submit") Delete note
+	Form(action="?/delete")
+		Btn(type="submit" variant="danger") Delete note
 
 <script>
 	import './../notes.css'
+
 	{ data, form } := $props()
+
+	errors := $derived.by =>
+		out := {}
+		if form?.errors
+			for issue of form.errors
+				name := issue.path?.[0]?.key
+				if name && !out[name]
+					out[name] = issue.message
+		out
