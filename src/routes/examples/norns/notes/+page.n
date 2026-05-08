@@ -32,4 +32,4 @@ section.animate-in-delayed.pt-8.space-y-6
 
 <script>
 	import './notes.css'
-	{ data, form } = $props()
+	{ data, form } := $props()

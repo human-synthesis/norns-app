@@ -10,4 +10,4 @@
 <script>
 	import Cell from 'Cell'
 
-	{ cells, winningLine = [], disabled = false, onCellClick } = $props()
+	{ cells, winningLine = [], disabled = false, onCellClick } := $props()

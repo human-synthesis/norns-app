@@ -1,10 +1,10 @@
 section.animate-in.space-y-6
 	p.text-xl.text-neutral-600.max-w-prose.leading-relaxed
-		| A meta-framework on top of Svelte and SvelteKit. Write components in Pug and CoffeeScript with the
+		| A meta-framework on top of Svelte and SvelteKit. Write components in Pug and Civet with the
 		code .n
 		|  file extension — no template wrappers, no
 		code lang=
-		|  attributes, just clean syntax.
+		|  attributes, just clean syntax with optional types.
 	.flex.flex-wrap.gap-3.pt-2
 		a.btn-cta(href="/examples") See examples →
 		a.btn-secondary(
@@ -19,14 +19,10 @@ section.animate-in-delayed.pt-20.space-y-5
 		li.flex.gap-3
 			span.feature-bullet ✦
 			div.text-neutral-700.leading-relaxed
-				strong.text-neutral-900 CoffeeScript everywhere
+				strong.text-neutral-900 Civet everywhere
 				| .  Write
-				code count = $state 0
-				| ; reactivity just works. The preprocessor fuses
-				code var
-				| -based output into proper
-				code let
-				|  declarations under the hood.
+				code count .= $state 0
+				| ; reactivity just works. Civet's TypeScript-aware compiler emits ESM-correct output, so runes work without preprocessor magic.
 		li.flex.gap-3
 			span.feature-bullet ✦
 			div.text-neutral-700.leading-relaxed
@@ -41,6 +37,11 @@ section.animate-in-delayed.pt-20.space-y-5
 				| .  File-based routing,
 				code +page.c
 				|  loaders, layouts, adapters — nothing relearned.
+		li.flex.gap-3
+			span.feature-bullet ✦
+			div.text-neutral-700.leading-relaxed
+				strong.text-neutral-900 Norns runtime
+				| .  Feature-folder modularity, DI container, route/page wrappers with valibot validation, and a migrations CLI.
 		li.flex.gap-3
 			span.feature-bullet ✦
 			div.text-neutral-700.leading-relaxed

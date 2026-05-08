@@ -1,14 +1,15 @@
-import { fail, redirect } from '@sveltejs/kit'
-import { listNotes, createNote } from './db'
+import { redirect } from '@sveltejs/kit'
+import { page } from '@human-synthesis/norns/server'
+import { notes } from '$lib/norns/notes/server/public'
+import { createNoteSchema } from '$lib/norns/notes/shared/schema'
 
-export load = ->
-	notes: listNotes()
+export load := page.load
+	handler: ({ container }) =>
+		notes: notes(container).list()
 
-export actions =
-	create: ({ request }) ->
-		data = await request.formData()
-		title = data.get('title')?.toString().trim()
-		body = data.get('body')?.toString() ? ''
-		return fail 400, { error: 'title is required', body } unless title
-		id = createNote title, body
-		throw redirect 303, "/examples/norns/notes/#{id}"
+export actions := page.actions
+	create:
+		input: createNoteSchema
+		run: ({ input, container }) =>
+			id := notes(container).create input
+			throw redirect 303, `/examples/norns/notes/${id}`

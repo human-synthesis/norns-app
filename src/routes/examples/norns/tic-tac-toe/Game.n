@@ -43,9 +43,9 @@
 	import { board, mode, turn, result, stats, play, reset, setMode, incrementStats } from 'store'
 	import { scheduleAiMove } from 'ai'
 
-	notified = $state false
+	notified .= $state false
 
-	$effect ->
+	$effect =>
 		if $result?
 			unless notified
 				incrementStats $result.winner
@@ -53,12 +53,12 @@
 		else
 			notified = false
 
-	handleClick = (idx) ->
+	handleClick := (idx) =>
 		play idx
 		scheduleAiMove()
 
-	handleReset = ->
+	handleReset := =>
 		reset()
 
-	switchMode = (m) ->
+	switchMode := (m) =>
 		setMode m

@@ -17,4 +17,4 @@ header.glass-header
 
 <script>
 	import { page } from '$app/state'
-	path = $derived page.url.pathname
+	path := $derived page.url.pathname

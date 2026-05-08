@@ -1,22 +1,24 @@
-import { error, fail, redirect } from '@sveltejs/kit'
-import { getNote, updateNote, deleteNote } from '../db'
+import { error, redirect } from '@sveltejs/kit'
+import { page } from '@human-synthesis/norns/server'
+import { notes } from '$lib/norns/notes/server/public'
+import { updateNoteSchema } from '$lib/norns/notes/shared/schema'
 
-export load = ({ params }) ->
-	id = Number params.id
-	note = getNote id
-	throw error(404, 'note not found') unless note
-	{ note }
+export load := page.load
+	handler: ({ container, params }) =>
+		id := Number params.id
+		note := notes(container).get id
+		throw error 404, 'note not found' unless note
+		{ note }
 
-export actions =
-	update: ({ request, params }) ->
-		id = Number params.id
-		data = await request.formData()
-		title = data.get('title')?.toString().trim()
-		body = data.get('body')?.toString() ? ''
-		return fail 400, { error: 'title is required' } unless title
-		updateNote id, title, body
-		{ saved: true }
+export actions := page.actions
+	update:
+		input: updateNoteSchema
+		run: ({ input, container, event }) =>
+			id := Number event.params.id
+			notes(container).update id, input
+			{ saved: true }
 
-	delete: ({ params }) ->
-		deleteNote Number(params.id)
-		throw redirect(303, '/examples/norns/notes')
+	delete:
+		run: ({ container, event }) =>
+			notes(container).remove Number(event.params.id)
+			throw redirect 303, '/examples/norns/notes'

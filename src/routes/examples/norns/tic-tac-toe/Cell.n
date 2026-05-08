@@ -9,4 +9,4 @@ button.tt-cell(
 		span.tt-mark {value}
 
 <script>
-	{ value, isWinning = false, disabled = false, onClick } = $props()
+	{ value, isWinning = false, disabled = false, onClick } := $props()

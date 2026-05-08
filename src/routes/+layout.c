@@ -1,3 +1,3 @@
 import '../app.css'
 
-export prerender = false
+export prerender := false
