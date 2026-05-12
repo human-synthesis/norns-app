@@ -10,7 +10,5 @@ bun.lockb
 *.tokens
 scripts
 data/
-
-# Generated on every `.n` change by `pugTailwindExtract()` in vite.config.js
-# and read by Tailwind v4 (referenced from src/app.css via `@source`).
-src/.tailwind-pug-classes.html
+# Note: pugTailwindExtract's generated sidecar lives in
+# node_modules/.cache/norns/ — already covered by `node_modules` above.
