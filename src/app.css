@@ -1,4 +1,13 @@
 @import 'tailwindcss';
+
+/* Auto-generated sidecar that lists every Pug-shorthand class found in
+ * `.n` files. Tailwind v4's scanner can't read Pug chains directly — the
+ * `pugTailwindExtract()` plugin in vite.config.js writes the file and
+ * keeps it up to date on HMR. Reference it via @source so Tailwind treats
+ * the sidecar as a normal content source. File is gitignored.
+ */
+@source "./.tailwind-pug-classes.html";
+
 @import '@human-synthesis/norns-ui/styles';
 
 /*
