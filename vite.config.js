@@ -21,11 +21,20 @@ export default defineConfig({
 		// need a `presets` or `additionalHelpers` option to merge with defaults
 		// without replacing them. Until then, `components` is the only preset
 		// channel.
+		// exportDirs was removed in @human-synthesis/norns 0.0.11 — feature
+		// exports are imported explicitly.
 		nornsAutoImport({
-			exportGlobs: ['src/lib/**/public.c'],
 			components: ui.components
 		}),
 		tailwindcss(),
 		sveltekit()
-	]
+	],
+	// In workspace mode @human-synthesis/norns is a symlink into the kit fork,
+	// which has its own @sveltejs/kit under pnpm. Left external, its server
+	// modules would load THAT copy (realpath resolution) and crash with
+	// "Could not get the request store" — two kit instances, two
+	// AsyncLocalStorage worlds. Bundling norns through Vite dedupes its kit
+	// imports onto the app's single copy.
+	resolve: { dedupe: ['@sveltejs/kit'] },
+	ssr: { noExternal: ['@human-synthesis/norns'] }
 });
