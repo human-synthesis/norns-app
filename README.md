@@ -1,75 +1,70 @@
 # norns-app
 
-**Starter template for Norns apps.**
+Spec-first starter for [Norns](https://github.com/human-synthesis/norns) apps.
 
-A single page that exercises the full Norns runtime — feature-folder modularity, DI, valibot validation, server actions, Pug + Civet — in roughly 60 LOC of code you can read in one sitting and rewrite in two.
+You write **specs** (TRON) and, when needed, small **custom bodies** (Civet).
+`norns generate` turns the specs into the entire SvelteKit app — schema,
+queries, actions, policies, state machines, pages, wrangler config — under the
+gitignored `.norns/generated/` tree. Nothing in that tree is edited by hand.
 
-## Stack
+## Layout
 
-- [Svelte 5](https://svelte.dev) — components and runes
-- [SvelteKit 2](https://kit.svelte.dev) — file-system routing, SSR, endpoints
-- [Pug](https://pugjs.org) — templates (in `.n` files)
-- [Civet](https://civet.dev) — script language (in `.n` `<script>` blocks and `.c` files)
-- [Tailwind CSS v4](https://tailwindcss.com) — styling
-- [Vite](https://vitejs.dev) — bundler
-- [bun](https://bun.sh) — runtime / package manager
-- [`@human-synthesis/norns`](https://github.com/human-synthesis/norns) + [`norns-core`](https://github.com/human-synthesis/norns-core) — the framework
-- [`@human-synthesis/norns-ui`](https://github.com/human-synthesis/norns-ui) — UI components
-- [valibot](https://valibot.dev) — input validation
+```
+specs/            canonical app definition (TRON) — app.tron + one file per module
+src/              custom code only
+  hooks.server.c  runtime wiring: db, triggers, serializer, optional auth
+  auth.c          better-auth factory (opt-in via BETTER_AUTH_SECRET)
+  tasks/actions/retitle.c   custom body for the `impl: custom` action
+  app.css         theme — imported by the generated root layout
+migrations/       committed SQL, produced by `norns migrate gen`
+.norns/           generated output + dev SQLite (gitignored)
+```
 
-## Setup
+## Develop
 
 ```sh
-bun create human-synthesis/norns-app my-app
-cd my-app
 bun install
+bun run dev            # regenerates from specs/ on change, serves the app
 ```
 
-## Run
+`norns dev` watches `specs/`, regenerates on save, and refuses to emit code
+that violates the spec (bad addresses, invalid page bindings, unsound
+guards). Local requests run against SQLite at `.norns/dev.db`; migrations in
+`migrations/` are applied automatically on boot.
+
+After changing entities:
 
 ```sh
-bun run dev          # dev server at http://localhost:5173
-bun run build        # production build
-bun run preview      # preview production build
+bunx norns migrate gen   # writes migrations/<module>/*.sql — commit these
+bunx norns trace         # runs every action example against sandboxed SQLite
 ```
 
-## What's in here
+## The starter spec
 
+`specs/tasks.tron` defines a `Task` entity (status machine `open → done`),
+a query, two actions and a page:
+
+- `tasks.Action.complete` — declarative: guard `status == open`, sets status,
+  emits `task.completed`.
+- `tasks.Action.retitle` — `impl: custom`; its body lives at
+  `src/tasks/actions/retitle.c` and is called by the generated shell after
+  guards and policies have run.
+- The `/` page binds `tasks.Query.open` to the norns-ui `Table` component;
+  bindings are validated at generate time against the props contracts
+  exported by `@human-synthesis/norns-ui/contracts`.
+
+## Auth (optional)
+
+Set `BETTER_AUTH_SECRET` in `.env` and create better-auth's tables once with
+`bunx @better-auth/cli migrate`. Without the secret the app runs open.
+
+## Deploy (Cloudflare)
+
+```sh
+bun run build
+bunx wrangler d1 migrations apply <db> --remote
+bunx wrangler deploy -c .norns/generated/wrangler.json
 ```
-src/
-  hooks.server.c                # boots the norns runtime, eager-loads feature modules
-  app.css, app.html             # global styles + html shell
-  routes/
-    +layout.c, +layout.n        # app shell with the <Header>
-    +page.n                     # one-page demo: form + list of messages
-    +page.server.c              # load() + send action wired to the messages feature
-  lib/
-    components/Header.n         # site nav
-    norns/
-      messages/                 # one feature folder, in-memory store
-        server/{module,repo,service,public}.c
-```
 
-## The starter feature
-
-`src/lib/norns/messages/` is a complete Norns feature folder, in miniature:
-
-- **`repo.c`** — in-memory `list` / `add` / `clear`. Replace with Drizzle, better-sqlite3, D1, or anything else when you need persistence.
-- **`service.c`** — valibot schema + `create` / `list` business logic. Errors flow back through `fail(400, { errors })` and end up rendered by `<Form form={form}> + <Field name="text">`.
-- **`module.c`** — DI registrations. The only file `boot()` reaches; everything else stays private to the feature.
-- **`public.c`** — `import { messages }` from this is how routes / other features call into the service.
-
-To see how it's wired:
-
-- `src/routes/+page.server.c` calls `messages().create({ text })` and `messages().list()`.
-- `src/routes/+page.n` renders `<Form>` from `@human-synthesis/norns-ui`. Field-level errors arrive via `form?.errors` and the Form-context error map; no per-page boilerplate.
-
-## Going further
-
-Delete `src/lib/norns/messages/` and `src/routes/+page.*` and rewrite. Or copy the feature folder for each new domain you add — that's the whole pattern.
-
-Examples + a side-by-side LOC comparison vs vanilla SvelteKit live in [norns-demo](https://github.com/human-synthesis/norns-demo).
-
-## License
-
-MIT © Daniel Teodoroiu / [Human Synthesis](https://humansynthesis.ai). Built on top of [SvelteKit](https://github.com/sveltejs/kit) and [Svelte](https://github.com/sveltejs/svelte) © Svelte Contributors, MIT licensed.
+`wrangler.json` is generated from the app spec (D1 binding, crons, R2 when a
+`file` field exists). Set `settings.cloudflare.d1_id` in `specs/app.tron`.

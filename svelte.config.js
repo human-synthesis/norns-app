@@ -1,4 +1,4 @@
-import adapter from '@sveltejs/adapter-auto';
+import adapter from '@sveltejs/adapter-cloudflare';
 import { nornsAutoImport } from '@human-synthesis/norns/auto-import';
 import { nornsConfig } from '@human-synthesis/norns/config';
 import { nornsPreprocess } from '@human-synthesis/norns/preprocess';
@@ -34,8 +34,6 @@ export default nornsConfig({
 		...nornsPreprocess().map(scopeToProject),
 		scopeToProject(
 			nornsAutoImport({
-				componentDirs: ['src/lib/components', 'src/routes'],
-				exportDirs: ['src/lib', 'src/routes'],
 				components: ui.components
 			})
 		)

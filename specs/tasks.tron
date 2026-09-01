@@ -1,0 +1,41 @@
+{
+  "module": "tasks",
+  "depends": ["core"],
+  "entities": {
+    "Task": {
+      "owner": "owner",
+      "fields": {
+        "owner": { "type": "ref", "ref": "core.Entity.User" },
+        "title": { "type": "text" },
+        "note": { "type": "text", "optional": true }
+      },
+      "status": { "open": ["done"], "done": [] }
+    }
+  },
+  "queries": {
+    "open": { "from": "Task", "limit": 50, "sort": "title" }
+  },
+  "actions": {
+    "complete": {
+      "input": { "id": "Task.id" },
+      "requires": "status == open",
+      "steps": [{ "set": { "status": "done", "entity": "Task" } }, { "emit": "task.completed" }],
+      "refresh": ["tasks.Query.open"],
+      "examples": [{ "input": { "id": "$open" }, "expect": { "status": "done" } }]
+    },
+    "retitle": {
+      "input": { "id": "Task.id", "title": "Task.title" },
+      "examples": [{ "input": { "id": "$open", "title": "Renamed" }, "expect": { "title": "Renamed" } }],
+      "impl": "custom"
+    }
+  },
+  "policies": {
+    "Task": { "read": "owner or role:admin", "write": "owner" }
+  },
+  "pages": {
+    "index": {
+      "route": "/",
+      "components": [{ "table": "tasks.Query.open", "pageSize": 10 }]
+    }
+  }
+}
