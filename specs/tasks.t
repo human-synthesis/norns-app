@@ -35,7 +35,8 @@
   "pages": {
     "index": {
       "route": "/",
-      "components": [{ "table": "tasks.Query.open", "pageSize": 10 }]
+      "components": [{ "table": "tasks.Query.open", "pageSize": 10 }],
+      "expect": [{ "role": "table" }]
     }
   }
 }

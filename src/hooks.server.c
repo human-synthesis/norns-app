@@ -1,32 +1,25 @@
-// Spec-first boot: the generated tree (.norns/generated) owns routes and lib;
-// this file only wires runtime services — db, triggers, serializer, auth —
-// around it.
-import { boot, applyMigrations, betterSqlite, d1 } from '@human-synthesis/norns/server'
+// Spec-first boot (D45): serializer and dev seed come from the spec's
+// `app.settings` (generated into $lib/app/settings.c) — this file keeps only
+// the wiring the spec genuinely cannot say: env-specific db + auth handles.
+import { boot, applyMigrations, betterSqlite, d1, seedDev } from '@human-synthesis/norns/server'
 import { tronSerializer } from '@human-synthesis/norns-tron/server'
 import { env } from '$env/dynamic/private'
 
 import { createAuth } from './auth.c'
-import { Task } from '$lib/tasks/schema.c'
+import { SETTINGS } from '$lib/app/settings.c'
 
-// Generated trigger tables — one per module that declares triggers.
-// Event triggers feed the in-process bus; schedule ones run on the cron shim
-// locally and on Cloudflare cron triggers in production.
 triggerFiles := import.meta.glob '/.norns/generated/lib/*/triggers.c', { eager: true }
 triggers := Object.values(triggerFiles).map (m) => m.triggers ?? []
+schemaFiles := import.meta.glob '/.norns/generated/lib/*/schema.c', { eager: true }
 
 // Local dev: SQLite under .norns/ (gitignored), migrations applied on boot,
-// sample rows seeded on first run. Production D1 migrates via
+// spec-declared seed rows on first run. Production D1 migrates via
 // `wrangler d1 migrations apply` instead.
 devDb .= undefined
 if import.meta.env.DEV
 	devDb = await betterSqlite '.norns/dev.db'
 	await applyMigrations devDb, 'migrations'
-	existing := await devDb.select().from(Task).limit(1)
-	if existing.length === 0
-		await devDb.insert(Task).values [
-			{ id: crypto.randomUUID(), owner: 'dev', title: 'Edit specs/tasks.tron and watch this page regenerate' }
-			{ id: crypto.randomUUID(), owner: 'dev', title: 'Run `bunx norns trace` to execute the action examples' }
-		]
+	await seedDev devDb, schemaFiles, SETTINGS.seed
 
 // On Cloudflare the D1 binding only exists per-request, so the scoped
 // container gets its db here rather than at boot.
@@ -38,8 +31,7 @@ d1Handle := async ({ event, resolve }) =>
 
 // Auth is opt-in: set BETTER_AUTH_SECRET (and run the better-auth CLI
 // migration once) to enable it. Without it, dev requests act as the seeded
-// `dev` admin so policy-filtered queries stay visible; production without
-// auth serves anonymous requests (policies filter everything out).
+// `dev` admin so policy-filtered queries stay visible.
 auth := devDb and env.BETTER_AUTH_SECRET ? createAuth({ db: devDb, env }) : undefined
 
 devUserHandle := async ({ event, resolve }) =>
@@ -48,7 +40,7 @@ devUserHandle := async ({ event, resolve }) =>
 
 opts := {
 	triggers
-	serializer: tronSerializer()
+	serializer: SETTINGS.serializer === 'tron' ? tronSerializer() : undefined
 	cronShim: import.meta.env.DEV
 	extraHandle: import.meta.env.DEV and !auth ? [d1Handle, devUserHandle] : d1Handle
 }

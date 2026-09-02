@@ -10,13 +10,19 @@ gitignored `.norns/generated/` tree. Nothing in that tree is edited by hand.
 ## Layout
 
 ```
-specs/            canonical app definition (TRON) — app.tron + one file per module
+specs/            canonical app definition (TRON) — app.t + one file per module
+                  (incl. `settings`: serializer, dev seed rows, shell nav/brand)
 src/              custom code only
-  hooks.server.c  runtime wiring: db, triggers, serializer, optional auth
+  hooks.server.c  env wiring the spec can't say: db split, D1 handle, opt-in auth
+                  (serializer + dev seed come from the spec via $lib/app/settings.c)
   auth.c          better-auth factory (opt-in via BETTER_AUTH_SECRET)
   tasks/actions/retitle.c   custom body for the `impl: custom` action
-  app.css         theme — imported by the generated root layout
+  app.css         BUILD WIRING ONLY (tailwind entry) — never add styles here;
+                  theme = `app.settings.tokens`, everything else = the owning
+                  Component/Snippet body's scoped <style>
 migrations/       committed SQL, produced by `norns migrate gen`
+tests/smoke.test.js   13-line bridge — e2e is DERIVED from the specs (smoke
+                  matrix); grow coverage with `pages.<name>.expect`, not test code
 .norns/           generated output + dev SQLite (gitignored)
 ```
 
@@ -36,12 +42,15 @@ After changing entities:
 
 ```sh
 bunx norns migrate gen   # writes migrations/<module>/*.sql — commit these
-bunx norns trace         # runs every action example against sandboxed SQLite
+bunx norns trace         # runs every example + derived cases (illegal status
+                         # transitions, permission/IDOR matrix) against the
+                         # generated shells in sandboxed SQLite
+bun test                 # the derived smoke matrix: every page + 404 control
 ```
 
 ## The starter spec
 
-`specs/tasks.tron` defines a `Task` entity (status machine `open → done`),
+`specs/tasks.t` defines a `Task` entity (status machine `open → done`),
 a query, two actions and a page:
 
 - `tasks.Action.complete` — declarative: guard `status == open`, sets status,
@@ -67,4 +76,4 @@ bunx wrangler deploy -c .norns/generated/wrangler.json
 ```
 
 `wrangler.json` is generated from the app spec (D1 binding, crons, R2 when a
-`file` field exists). Set `settings.cloudflare.d1_id` in `specs/app.tron`.
+`file` field exists). Set `settings.cloudflare.d1_id` in `specs/app.t`.
