@@ -62,6 +62,18 @@ a query, two actions and a page:
   bindings are validated at generate time against the props contracts
   exported by `@human-synthesis/norns-ui/contracts`.
 
+## Live queries (cross-device sync)
+
+Mark any query `"live": true` and the generator does the rest: a `/_norns/live`
+SSE route, `depends` keys in the load, and the subscription injected into the
+generated page shell — a task created in one browser appears in another with no
+polling and no code in your bodies, because every action's `refresh` list
+already publishes through the same bridge. On Cloudflare the `ROOM` Durable
+Object binding is per-request exactly like `DB`: `src/hooks.server.c` rebinds
+the `live` bridge beside `db`, and the generated `worker.js` (pointed at by
+`wrangler.json`'s `main`) exports the `NornsRoom` class the config binds —
+SQLite-backed (`new_sqlite_classes`), so it works on the free plan.
+
 ## Auth (optional)
 
 Set `BETTER_AUTH_SECRET` in `.env` and create better-auth's tables once with

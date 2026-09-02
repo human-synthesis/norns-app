@@ -1,7 +1,7 @@
 // Spec-first boot (D45): serializer and dev seed come from the spec's
 // `app.settings` (generated into $lib/app/settings.c) — this file keeps only
 // the wiring the spec genuinely cannot say: env-specific db + auth handles.
-import { boot, applyMigrations, betterSqlite, d1, seedDev } from '@human-synthesis/norns/server'
+import { boot, applyMigrations, betterSqlite, createLive, d1, seedDev } from '@human-synthesis/norns/server'
 import { tronSerializer } from '@human-synthesis/norns-tron/server'
 import { env } from '$env/dynamic/private'
 
@@ -21,12 +21,18 @@ if import.meta.env.DEV
 	await applyMigrations devDb, 'migrations'
 	await seedDev devDb, schemaFiles, SETTINGS.seed
 
-// On Cloudflare the D1 binding only exists per-request, so the scoped
-// container gets its db here rather than at boot.
+// On Cloudflare the D1 and ROOM bindings only exist per-request, so the
+// scoped container gets its db — and, when live queries bound a Room, its
+// Room-backed live bridge — here rather than at boot. The two have the
+// same lifetime; wiring one without the other leaves live silently local.
 d1Handle := async ({ event, resolve }) =>
 	if event.platform?.env?.DB
 		db := await d1 event.platform.env.DB
 		event.locals.container.single 'db', => db
+	if event.platform?.env?.ROOM
+		room := event.platform.env.ROOM
+		event.locals.container.single 'live', =>
+			createLive { events: event.locals.container.resolve('events'), room }
 	resolve event
 
 // Auth is opt-in: set BETTER_AUTH_SECRET (and run the better-auth CLI
