@@ -14,7 +14,8 @@ schemaFiles := import.meta.glob '/.norns/generated/lib/*/schema.c', { eager: tru
 
 // Local dev: SQLite under .norns/ (gitignored), migrations applied on boot,
 // spec-declared seed rows on first run. Production D1 migrates via
-// `wrangler d1 migrations apply` instead.
+// `wrangler d1 migrations apply` (generate mirrors migrations/<module>/*.sql
+// into the flat dir the generated wrangler.json points at).
 devDb .= undefined
 if import.meta.env.DEV
 	devDb = await betterSqlite '.norns/dev.db'
@@ -36,11 +37,24 @@ d1Handle := async ({ event, resolve }) =>
 	resolve event
 
 // Auth is opt-in: set BETTER_AUTH_SECRET (and run the better-auth CLI
-// migration once) to enable it. Without it, dev requests act as the seeded
-// `dev` admin so policy-filtered queries stay visible.
-auth := devDb and env.BETTER_AUTH_SECRET ? createAuth({ db: devDb, env }) : undefined
+// migration once) to enable it. Without it the app is OPEN — every request,
+// in dev and in production alike, acts as the `dev` admin, so `$user` writes
+// and owner/role policies keep working instead of failing on a missing user
+// (D86). Configure auth before exposing real data.
+//
+// With the secret set: dev builds better-auth over the local SQLite handle;
+// on Workers the D1 binding exists only per request, so the instance is
+// built once per binding from the request's DB (authHandle accepts a factory).
+authCache := new WeakMap()
+productionAuth := async (event) =>
+	binding := event.platform?.env?.DB
+	if !binding then return undefined
+	if !authCache.has(binding) then authCache.set(binding, createAuth({ db: await d1(binding), env }))
+	authCache.get(binding)
 
-devUserHandle := async ({ event, resolve }) =>
+auth := env.BETTER_AUTH_SECRET ? (devDb ? createAuth({ db: devDb, env }) : productionAuth) : undefined
+
+openUserHandle := async ({ event, resolve }) =>
 	event.locals.user ?= { id: 'dev', roles: ['admin'] }
 	resolve event
 
@@ -48,7 +62,7 @@ opts := {
 	triggers
 	serializer: SETTINGS.serializer === 'tron' ? tronSerializer() : undefined
 	cronShim: import.meta.env.DEV
-	extraHandle: import.meta.env.DEV and !auth ? [d1Handle, devUserHandle] : d1Handle
+	extraHandle: auth ? d1Handle : [d1Handle, openUserHandle]
 }
 if auth then opts.auth = auth
 

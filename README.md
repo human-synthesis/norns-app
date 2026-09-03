@@ -82,10 +82,15 @@ Set `BETTER_AUTH_SECRET` in `.env` and create better-auth's tables once with
 ## Deploy (Cloudflare)
 
 ```sh
-bun run build
-bunx wrangler d1 migrations apply <db> --remote
-bunx wrangler deploy -c .norns/generated/wrangler.json
+bunx wrangler d1 create <app>-db            # once; put the returned id in the spec (below)
+bunx wrangler d1 migrations apply <app>-db --remote
+bun run deploy                              # build + wrangler deploy -c .norns/generated/wrangler.json
 ```
 
 `wrangler.json` is generated from the app spec (D1 binding, crons, R2 when a
-`file` field exists). Set `settings.cloudflare.d1_id` in `specs/app.t`.
+`file` field exists). The D1 id lives in the spec at `app.settings.cloudflare.d1_id`
+— through the MCP that is one op:
+`{op: "set", path: "app.settings.cloudflare.d1_id", value: "<uuid>"}` (the `app.`
+prefix is required; `settings.…` alone is not a spec path). Migrations: generate
+mirrors `migrations/<module>/*.sql` into `.norns/generated/migrations/` in the flat,
+numbered layout wrangler tracks, so `d1 migrations apply` sees them.
