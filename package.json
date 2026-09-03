@@ -1,6 +1,6 @@
 {
   "name": "norns-app",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "Starter template for Norns apps",
   "private": true,
   "type": "module",

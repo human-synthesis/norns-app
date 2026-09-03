@@ -11,16 +11,18 @@ gitignored `.norns/generated/` tree. Nothing in that tree is edited by hand.
 
 ```
 specs/            canonical app definition (TRON) — app.t + one file per module
-                  (incl. `settings`: serializer, dev seed rows, shell nav/brand)
+                  (incl. `settings`: serializer, dev seed rows, shell nav/brand).
+                  Starts EMPTY: app.t with no modules; `/` shows a blank-state
+                  screen until the first spec Page exists
 src/              custom code only
   hooks.server.c  env wiring the spec can't say: db split, D1 handle, opt-in auth
                   (serializer + dev seed come from the spec via $lib/app/settings.c)
   auth.c          better-auth factory (opt-in via BETTER_AUTH_SECRET)
-  tasks/actions/retitle.c   custom body for the `impl: custom` action
+  <module>/…      custom bodies appear here as specs point at them
   app.css         BUILD WIRING ONLY (tailwind entry) — never add styles here;
                   theme = `app.settings.tokens`, everything else = the owning
                   Component/Snippet body's scoped <style>
-migrations/       committed SQL, produced by `norns migrate gen`
+migrations/       committed SQL, produced by `norns migrate gen` (absent until then)
 tests/smoke.test.js   13-line bridge — e2e is DERIVED from the specs (smoke
                   matrix); grow coverage with `pages.<name>.expect`, not test code
 .norns/           generated output + dev SQLite (gitignored)
@@ -48,19 +50,16 @@ bunx norns trace         # runs every example + derived cases (illegal status
 bun test                 # the derived smoke matrix: every page + 404 control
 ```
 
-## The starter spec
+## Starting from empty
 
-`specs/tasks.t` defines a `Task` entity (status machine `open → done`),
-a query, two actions and a page:
-
-- `tasks.Action.complete` — declarative: guard `status == open`, sets status,
-  emits `task.completed`.
-- `tasks.Action.retitle` — `impl: custom`; its body lives at
-  `src/tasks/actions/retitle.c` and is called by the generated shell after
-  guards and policies have run.
-- The `/` page binds `tasks.Query.open` to the norns-ui `Table` component;
-  bindings are validated at generate time against the props contracts
-  exported by `@human-synthesis/norns-ui/contracts`.
+The starter carries no example: `specs/app.t` declares no modules, so the
+generated app is a shell with a blank-state `/`. Your first module is one file
+— `specs/<module>.t` with entities, queries, actions, policies and pages — plus
+its name in `app.t`'s `modules` list; through norns-mcp that is one
+`spec_apply`. The first Page replaces the blank screen; the first
+`impl: custom` unit gets its body at `src/<module>/<kind>s/<name>.c`.
+Bindings are validated at generate time against the props contracts exported
+by `@human-synthesis/norns-ui/contracts`.
 
 ## Live queries (cross-device sync)
 
