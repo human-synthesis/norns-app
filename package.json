@@ -1,12 +1,13 @@
 {
   "name": "norns-app",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Starter template for Norns apps",
   "private": true,
   "type": "module",
   "scripts": {
     "dev": "NODE_OPTIONS='--preserve-symlinks' norns dev",
     "build": "NODE_OPTIONS='--preserve-symlinks' norns build",
+    "deploy": "bun run build && wrangler deploy -c .norns/generated/wrangler.json",
     "preview": "norns preview",
     "check": "svelte-check --tsconfig ./jsconfig.json",
     "smoke": "bun test tests/smoke.test.js"
