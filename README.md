@@ -33,6 +33,21 @@ bun run build        # production build
 bun run preview      # preview production build
 ```
 
+## Check
+
+```sh
+bun run lint         # norns lint: scans .n / .c / vite.config for known Civet + Pug pitfalls
+bun run check        # svelte-kit sync + svelte-check over the .js / .ts parts (config, hooks)
+bunx norns diag src/lib/norns/messages/server/service.c   # print the JS Civet compiles a file to
+```
+
+`svelte-check` only understands `.svelte`, `.js` and `.ts`, so it does not see `.n` or `.c`
+sources. The Civet and Pug side is covered by `norns lint`, by the compile step in `bun run
+build`, and by `norns diag` when an error message is unhelpful. The template has no test
+runner; add `bun test` or Playwright when your app needs one. The framework's own suites
+live in the framework repos (`bun test` inside `norns/packages/norns`,
+`norns-core/packages/norns-core`, `norns-ui`, `norns-tron`, `norns-mcp`).
+
 ## What's in here
 
 ```
