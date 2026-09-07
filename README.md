@@ -36,17 +36,20 @@ bun run preview      # preview production build
 ## Check
 
 ```sh
-bun run lint         # norns lint: scans .n / .c / vite.config for known Civet + Pug pitfalls
-bun run check        # svelte-kit sync + svelte-check over the .js / .ts parts (config, hooks)
+bun run lint         # norns lint: Civet + Pug pitfall scan over .n / .c (templates and script blocks) + vite.config
+bun run check        # norns check: preprocess + compile every .n / .c through svelte.config.js; file:line:column errors
+bun test             # tests/*.test.js — the feature through the DI container (bun imports .c via tests/civet-loader.js)
+bun run build        # full Vite build
 bunx norns diag src/lib/norns/messages/server/service.c   # print the JS Civet compiles a file to
+bunx norns diag --template src/routes/+page.n            # print the Svelte source the compiler sees
+bun run check:svelte # svelte-kit sync + svelte-check over the .js / .ts / .svelte parts only
 ```
 
-`svelte-check` only understands `.svelte`, `.js` and `.ts`, so it does not see `.n` or `.c`
-sources. The Civet and Pug side is covered by `norns lint`, by the compile step in `bun run
-build`, and by `norns diag` when an error message is unhelpful. The template has no test
-runner; add `bun test` or Playwright when your app needs one. The framework's own suites
-live in the framework repos (`bun test` inside `norns/packages/norns`,
-`norns-core/packages/norns-core`, `norns-ui`, `norns-tron`, `norns-mcp`).
+Run them in that order before calling a change done. `svelte-check` never reads `.n` or `.c`,
+so `norns check` (not `check:svelte`) is the pass signal for Norns code. `CLAUDE.md` in this
+repo carries the Civet / Pug pitfalls and the same verification order for AI agents. The
+framework's own suites live in the framework repos (`bun test` inside `norns/packages/norns`,
+`norns-core/packages/norns-core`, `norns-ui`, `norns-tron`).
 
 ## What's in here
 
@@ -63,16 +66,21 @@ src/
     norns/
       messages/                 # one feature folder, in-memory store
         server/{module,repo,service,public}.c
+        shared/schema.c         # valibot schema shared by the form action and the API route
+tests/
+  civet-loader.js               # bun plugin: compiles .c on import so tests can load feature code
+  messages.test.js              # the feature through the DI container
 ```
 
 ## The starter feature
 
 `src/lib/norns/messages/` is a complete Norns feature folder, in miniature:
 
-- **`repo.c`** — in-memory `list` / `add` / `clear`. Replace with Drizzle, better-sqlite3, D1, or anything else when you need persistence.
-- **`service.c`** — valibot schema + `create` / `list` business logic. Errors flow back through `fail(400, { errors })` and end up rendered by `<Form form={form}> + <Field name="text">`.
+- **`repo.c`** — in-memory `list` / `add`. Replace with better-sqlite3, D1, or anything else when you need persistence.
+- **`service.c`** — `create` / `list` business logic.
+- **`shared/schema.c`** — the valibot input schema. Validation errors flow back through `fail(400, { errors })` and end up rendered by `<Form form={form}> + <Field name="text">`.
 - **`module.c`** — DI registrations. The only file `boot()` reaches; everything else stays private to the feature.
-- **`public.c`** — `import { messages }` from this is how routes / other features call into the service.
+- **`public.c`** — `import { messages }` from this is how routes / other features call into the service. Project code is always imported explicitly; only framework helpers (`page`, `route`, `boot`, …) and components are auto-imported.
 
 To see how it's wired:
 

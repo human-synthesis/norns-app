@@ -1,12 +1,12 @@
-import { route } from '@human-synthesis/norns/server'
 import { messages } from '$lib/norns/messages/server/public'
-import { sendMessageSchema } from '$lib/norns/messages/server/service'
+import { sendMessageSchema } from '$lib/norns/messages/shared/schema'
 
 // GET /api/messages
 //
-// Responses are content-negotiated by the app-wide serializer (see
-// hooks.server.c): `Accept: application/tron` gets TRON, anything else gets
-// plain JSON. From the browser, use the client wrapper:
+// `route` is auto-imported from @human-synthesis/norns/server. Responses are
+// content-negotiated by the app-wide serializer (see hooks.server.c):
+// `Accept: application/tron` gets TRON, anything else gets plain JSON.
+// From the browser, use the client wrapper:
 //
 //   import { api } from '@human-synthesis/norns-tron/client'
 //   { data } := await api.get '/api/messages'

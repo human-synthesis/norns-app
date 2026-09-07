@@ -6,39 +6,16 @@ import { presetUI } from '@human-synthesis/norns-ui/auto-import';
 
 const ui = presetUI();
 
-// Wrap a preprocessor so its hooks become no-ops on third-party node_modules
-// files. Needed for libraries like Bits UI that ship `<script lang="ts">`
-// source — our pipeline's svelte-preprocess TS handler corrupts their
-// destructured `$props()` declarations. With this guard, third-party
-// `.svelte` files fall through to vite-plugin-svelte's native lang="ts"
-// handling.
-//
-// `@human-synthesis/*` packages are an exception: norns-ui (and any future
-// `.n`-source UI lib in that scope) ships Civet + Pug source under
-// node_modules and *requires* this pipeline to compile. Letting their path
-// through keeps `Btn`, `Field`, etc. building correctly when imported by
-// a consumer app.
-const isThirdPartyNodeModule = (file) =>
-	!!file &&
-	file.includes('/node_modules/') &&
-	!file.includes('/node_modules/@human-synthesis/');
-const scopeToProject = (p) => ({
-	name: p.name,
-	markup: p.markup ? (args) => (isThirdPartyNodeModule(args.filename) ? null : p.markup(args)) : undefined,
-	script: p.script ? (args) => (isThirdPartyNodeModule(args.filename) ? null : p.script(args)) : undefined,
-	style: p.style ? (args) => (isThirdPartyNodeModule(args.filename) ? null : p.style(args)) : undefined
-});
-
+// The same nornsAutoImport instance is registered here (Svelte preprocessor
+// hooks, for .n / .svelte files) and in vite.config.js (Vite plugin hooks,
+// for standalone .c modules). Keep the two option objects identical.
 export default nornsConfig({
 	preprocess: [
-		...nornsPreprocess().map(scopeToProject),
-		scopeToProject(
-			nornsAutoImport({
-				componentDirs: ['src/lib/components', 'src/routes'],
-				exportDirs: ['src/lib', 'src/routes'],
-				components: ui.components
-			})
-		)
+		...nornsPreprocess(),
+		nornsAutoImport({
+			componentDirs: ['src/lib/components', 'src/routes'],
+			components: ui.components
+		})
 	],
 	kit: {
 		adapter: adapter()
