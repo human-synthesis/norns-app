@@ -29,7 +29,7 @@
   },
   "packageManager": "bun@1.3.14",
   "dependencies": {
-    "@human-synthesis/norns-tron": "^0.0.1",
+    "@human-synthesis/norns-tron": "^0.0.3",
     "valibot": "^1.4.0"
   }
 }
