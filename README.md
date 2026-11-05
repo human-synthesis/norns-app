@@ -7,7 +7,7 @@ A single page that exercises the full Norns runtime — feature-folder modularit
 ## Stack
 
 - [Svelte 5](https://svelte.dev) — components and runes
-- [SvelteKit 2](https://kit.svelte.dev) — file-system routing, SSR, endpoints
+- [SvelteKit 3](https://svelte.dev/docs/kit) — file-system routing, SSR, endpoints
 - [Pug](https://pugjs.org) — templates (in `.n` files)
 - [Civet](https://civet.dev) — script language (in `.n` `<script>` blocks and `.c` files)
 - [Tailwind CSS v4](https://tailwindcss.com) — styling
@@ -37,7 +37,7 @@ bun run preview      # preview production build
 
 ```sh
 bun run lint         # norns lint: Civet + Pug pitfall scan over .n / .c (templates and script blocks) + vite.config
-bun run check        # norns check: preprocess + compile every .n / .c through svelte.config.js; file:line:column errors
+bun run check        # norns check: preprocess + compile every .n / .c through the sveltekit() options in vite.config.js; file:line:column errors
 bun test             # tests/*.test.js — the feature through the DI container (bun imports .c via tests/civet-loader.js)
 bun run build        # full Vite build
 bunx norns diag src/lib/norns/messages/server/service.c   # print the JS Civet compiles a file to

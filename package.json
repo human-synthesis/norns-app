@@ -15,17 +15,17 @@
     "test": "bun test"
   },
   "devDependencies": {
-    "@human-synthesis/norns": "^0.0.19",
+    "@human-synthesis/norns": "^0.0.20",
     "@human-synthesis/norns-core": "^0.0.11",
-    "@human-synthesis/norns-ui": "^0.0.18",
-    "@sveltejs/adapter-auto": "^3.3.1",
-    "@sveltejs/kit": "^2.70.3",
-    "@sveltejs/vite-plugin-svelte": "^5.1.1",
+    "@human-synthesis/norns-ui": "^0.0.19",
+    "@sveltejs/adapter-auto": "^8.0.0",
+    "@sveltejs/kit": "^3.1.1",
+    "@sveltejs/vite-plugin-svelte": "^7.0.0",
     "@tailwindcss/vite": "^4",
     "svelte": "^5.57.3",
-    "svelte-check": "^4.0.0",
+    "svelte-check": "^4.7.8",
     "tailwindcss": "^4",
-    "vite": "^6.4.3"
+    "vite": "^8.0.12"
   },
   "packageManager": "bun@1.3.14",
   "dependencies": {
