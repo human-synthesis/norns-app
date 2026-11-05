@@ -16,7 +16,7 @@
   },
   "devDependencies": {
     "@human-synthesis/norns": "^0.0.20",
-    "@human-synthesis/norns-core": "^0.0.11",
+    "@human-synthesis/norns-core": "^0.0.12",
     "@human-synthesis/norns-ui": "^0.0.19",
     "@sveltejs/adapter-auto": "^8.0.0",
     "@sveltejs/kit": "^3.1.1",
