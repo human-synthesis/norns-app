@@ -19,10 +19,10 @@
     "@human-synthesis/norns-core": "^0.0.12",
     "@human-synthesis/norns-ui": "^0.0.19",
     "@sveltejs/adapter-auto": "^8.0.0",
-    "@sveltejs/kit": "^3.3.0",
+    "@sveltejs/kit": "^3.3.1",
     "@sveltejs/vite-plugin-svelte": "^7.0.0",
     "@tailwindcss/vite": "^4",
-    "svelte": "^5.57.3",
+    "svelte": "^5.58.0",
     "svelte-check": "^4.7.8",
     "tailwindcss": "^4",
     "vite": "^8.0.12"
